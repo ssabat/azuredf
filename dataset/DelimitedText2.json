@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "titanicsvnew"
+				"fileName": "titanicsvnew",
+				"container": "sksblob"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
