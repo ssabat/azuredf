@@ -1,0 +1,194 @@
+{
+	"name": "Container-Orchestration",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get-ACR-Login-Server",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@{concat('https://skgdemokeyvault', pipeline().parameters.env, '.vault.azure.net/secrets/ACR-LOGIN-SERVER/?api-version=7.0')}",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get-ACR-Username",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@{concat('https://skgdemokeyvault', pipeline().parameters.env, '.vault.azure.net/secrets/ACR-USERNAME/?api-version=7.0')}",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get-ACR-Password",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@{concat('https://skgdemokeyvault', pipeline().parameters.env, '.vault.azure.net/secrets/ACR-PASSWORD/?api-version=7.0')}",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Run-Container-Group",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get-ACR-Login-Server",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get-ACR-Username",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get-ACR-Password",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get-ACI-Proxy-Url",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get-ACI-Proxy-Key",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://www.yahoo.com",
+					"method": "POST",
+					"headers": {
+						"x-functions-key": {
+							"value": "@{activity('Get-ACI-Proxy-Key').output.value}",
+							"type": "Expression"
+						}
+					},
+					"body": {
+						"value": "type: Microsoft.ContainerInstance/containerGroups\napiVersion: 2018-10-01\nlocation: westeurope\nname: bellaciao\ntags: null\nproperties:\n  containers:\n  - name: app1\n    properties:\n      image: @{concat(activity('Get-ACR-Login-Server').output.value, '/container1:latest')}\n      resources:\n        requests:\n          cpu: 1\n          memoryInGB: 1.5\n  - name: app2\n    properties:\n      image: @{concat(activity('Get-ACR-Login-Server').output.value, '/container1:latest')}\n      resources:\n        requests:\n          cpu: 1\n          memoryInGB: 1.5\n  osType: Linux\n  restartPolicy: Never\n  imageRegistryCredentials:\n  - server: @{activity('Get-ACR-Login-Server').output.value}\n    username: @{activity('Get-ACR-Username').output.value}\n    password: @{activity('Get-ACR-Password').output.value}\n",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get-ACI-Proxy-Url",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@{concat('https://skgdemokeyvault', pipeline().parameters.env, '.vault.azure.net/secrets/ACI-PROXY-URL/?api-version=7.0')}",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get-ACI-Proxy-Key",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@{concat('https://skgdemokeyvault', pipeline().parameters.env, '.vault.azure.net/secrets/ACI-PROXY-KEY/?api-version=7.0')}",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"env": {
+				"type": "string",
+				"defaultValue": "dev"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-29T15:26:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

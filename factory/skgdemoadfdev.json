@@ -1,0 +1,9 @@
+{
+	"name": "skgdemoadfdev",
+	"location": "westus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "34554cd1-5685-401d-8123-da1079821687",
+		"tenantId": "0a0a59b2-8a35-490f-b3a7-a7ddc8598ba0"
+	}
+}
