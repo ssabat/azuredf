@@ -13,8 +13,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "parquetCrud/input/pk",
-				"fileSystem": "sample-data"
+				"fileName": "userdata1.parquet",
+				"fileSystem": "datalake"
 			},
 			"compressionCodec": "snappy"
 		},
