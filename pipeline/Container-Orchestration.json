@@ -76,6 +76,7 @@
 			},
 			{
 				"name": "Run-Container-Group",
+				"description": "Hello",
 				"type": "WebActivity",
 				"dependsOn": [
 					{
