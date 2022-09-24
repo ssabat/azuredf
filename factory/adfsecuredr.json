@@ -1,0 +1,9 @@
+{
+	"name": "adfsecuredr",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "664c5344-1974-4910-ad44-9742e68ba3a5",
+		"tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+	}
+}
